@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\sendmail;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Models\Token;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class MainController extends Controller
 {
@@ -40,7 +42,7 @@ class MainController extends Controller
             'password' => Hash::make($fields['password'])
         ]);
 
-
+        Mail::to($request['email'])->send(new Sendmail());
         //Generate token for the user
         //$token = $user->createToken('ProgrammersForce')->plainTextToken;
 
@@ -77,6 +79,7 @@ class MainController extends Controller
                
                 // Create Token
                 $token = $this->createToken($user->id);
+                
                 // dd($token);
                 // saving token table in db
                 $saveToken = Token::create([
