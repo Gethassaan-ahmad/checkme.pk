@@ -123,8 +123,8 @@ class MainController extends Controller
         try
         {
         $getToken = $request->bearerToken(); 
-
-        $decoded = JWT::decode($getToken, new Key("checkMe","HS256"));
+        $keyValue = config('constant.keyValue');
+        $decoded = JWT::decode($getToken, new Key($keyValue,"HS256"));
         $userID = $decoded->data;
         $userExist = Token::where("userID",$userID)->first();
         if($userExist)

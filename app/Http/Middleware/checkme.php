@@ -21,7 +21,8 @@ class checkme
     public function handle(Request $request, Closure $next)
     {
         $getToken = $request->bearerToken(); 
-        $decoded = JWT::decode($getToken, new Key("checkMe","HS256"));
+        $keyValue = config('constant.keyValue');
+        $decoded = JWT::decode($getToken, new Key($keyValue,"HS256"));
         $uID = $decoded->id;
 
         $TokenExist = Token::where('token',$getToken)->first();

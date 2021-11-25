@@ -21,8 +21,8 @@ class CommentController extends Controller
         //     'message'=>"bearer token not found" 
         // ]);
         // dd('sdsd');
-
-        $decoded = JWT::decode($getToken, new Key("checkMe","HS256"));
+        $keyValue = config('constant.keyValue');
+        $decoded = JWT::decode($getToken, new Key($keyValue,"HS256"));
 
         $userid = $decoded->data;
         // echo "hsdia";

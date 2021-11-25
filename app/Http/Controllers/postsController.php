@@ -8,7 +8,8 @@ use Illuminate\Http\Request;
 use App\Models\posts;
 use App\Http\Middleware\checkme;
 use App\Http\Requests\requestCreatePost;
-
+use App\Http\Resources\resourcePost;
+use Throwable;
 
 class postsController extends Controller
 {
@@ -29,8 +30,8 @@ class postsController extends Controller
         //     return response([
         //     'message'=>"bearer token not found" 
         // ]);
-        $decoded = JWT::decode($getToken, new Key("checkMe","HS256"));
-
+        $keyVlue = config('constant.keyValue');
+        $decoded = JWT::decode($getToken, new Key($keyVlue,"HS256"));
         $userid = $decoded->data;
         
         // echo "hsdia";
@@ -91,6 +92,20 @@ class postsController extends Controller
             return response([
                 'message' => 'This Document Not Found',
             ]);
+        }
+    }
+
+    public function allposts()
+    {
+        try {
+            $myposts = Posts::all();
+
+            if (is_null($myposts)) {
+                return response()->json('Data not found', 404);
+            }
+            return new resourcePost($user);
+        } catch (Throwable $e) {
+            return $e->getMessage();
         }
     }
 }
