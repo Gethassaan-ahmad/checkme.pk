@@ -10,6 +10,9 @@ use App\Models\User;
 use App\Models\Token;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use App\Http\Requests\requestRegistration;
+use App\Http\Requests\requestlogin;
+use Throwable;
 
 class MainController extends Controller
 {
@@ -24,16 +27,14 @@ class MainController extends Controller
     }
 
     //Register Action
-    public function register(Request $request)
+    public function register(requestRegistration $request)
+
     {
+      try {
+        
+        
         //Validate the fields
-        $fields = $request->validate(
-            [
-                'name' => 'required|string',
-                'email' => 'required|email|unique:users',
-                'password' => 'required|string|confirmed'
-            ]
-        );
+        $fields = $request->validated();
 
         //Create the user
         $user = User::create([
@@ -54,14 +55,16 @@ class MainController extends Controller
 
         //Return HTTP 201 status, call was successful and something was created
         return response($response, 201);
+    }catch (Throwable $e) {
+        return $e->getMessage();
+    }
     }
 
-    public function login(Request $request)
+    public function login(requestlogin $request)
     {
-        $request = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required|string'
-        ]);
+        try
+        {
+        $request = $request->validated();
 
         // Check Student
         $user = User::where('email', "=" , $request['email'])->first();
@@ -108,11 +111,17 @@ class MainController extends Controller
             ],404);
         
         } 
+
+        }catch (Throwable $e) {
+            return $e->getMessage();
+        }
          
     }
 
     public function logout(Request $request)
     {
+        try
+        {
         $getToken = $request->bearerToken(); 
 
         $decoded = JWT::decode($getToken, new Key("checkMe","HS256"));
@@ -132,10 +141,17 @@ class MainController extends Controller
             "message" => "logout successfull"
         ], 200);
 
+    }catch (Throwable $e) {
+        return $e->getMessage();
+    }
+
     }
 
     function createToken($data)
+
     {
+        try
+        {
         $key = "checkMe";
         $payload = array(
             "iss" => "http://127.0.0.1:8000",
@@ -146,5 +162,9 @@ class MainController extends Controller
         );
         $jwt = JWT::encode($payload, $key, 'HS256');
         return $jwt;
+    }catch (Throwable $e) {
+        return $e->getMessage();
     }
+    }
+        
 }

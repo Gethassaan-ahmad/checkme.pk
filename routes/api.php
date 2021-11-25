@@ -28,7 +28,7 @@ Route::middleware(['protectedpage'])->group (function()
 {
     Route::post("logout/", [MainController::class, "logout"]);
     Route::post("posts/", [postsController::class, "create"]);
-    Route::post("posts/{id}", [postsController::class, "destroy"]);
+    Route::post("destroy/{id}", [postsController::class, "destroy"]);
     
     Route::post("comment", [CommentController::class, "create"]);
     Route::post("commentUpdate/{id}", [CommentController::class, "update"]);

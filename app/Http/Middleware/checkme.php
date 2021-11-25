@@ -22,6 +22,7 @@ class checkme
     {
         $getToken = $request->bearerToken(); 
         $decoded = JWT::decode($getToken, new Key("checkMe","HS256"));
+        $uID = $decoded->id;
 
         $TokenExist = Token::where('token',$getToken)->first();
 

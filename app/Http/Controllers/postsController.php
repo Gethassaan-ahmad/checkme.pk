@@ -7,13 +7,22 @@ use Firebase\JWT\Key;
 use Illuminate\Http\Request;
 use App\Models\posts;
 use App\Http\Middleware\checkme;
+use App\Http\Requests\requestCreatePost;
+
 
 class postsController extends Controller
 {
     // to create posts
-    public function create(Request $request)
+    public function create(requestCreatePost $request)
     {
         $getToken = $request->bearerToken();
+
+        $request->validate([
+
+            // 'attachement'  => 'required|file',
+
+        ]);
+
 
         // if (!isset($getToken)) {
 
@@ -49,9 +58,39 @@ class postsController extends Controller
             ]);
     }
 
+
     public function update(Request $request, $id)
     {
-        posts::put('id',$id)->update($request->all());
+        $request->validated();
 
+        // $collection = (new Mongo())->schooldb->students;
+        // $findOne = $collection->findOne(['name' => $name]);
+
+
+        $data_to_update = [];
+        foreach ($request->all() as $key => $value) {
+            if (in_array($key, ['title', 'body', ])) {       
+                $data_to_update[$key]=$value;
+            }
+        }
+        
+        if (isset($findOne)) {
+            $id->updateOne(
+                ['title' => $title],
+                ['$set' => $data_to_update]
+            );
+
+            // 'name' => 'Hassan'
+            // request->key => request->value
+
+
+            return response([
+                'message' => 'Successfully Updated',
+            ]);
+        } else {
+            return response([
+                'message' => 'This Document Not Found',
+            ]);
+        }
     }
 }
